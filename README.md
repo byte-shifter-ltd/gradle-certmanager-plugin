@@ -9,6 +9,7 @@ WIP
 
 ## Build Status
 
+[![Build Status](https://travis-ci.org/byte-shifter-ltd/gradle-certmanager-plugin.svg)](https://travis-ci.org/byte-shifter-ltd/gradle-certmanager-plugin)
 
 ## Usage
 
@@ -43,4 +44,5 @@ buildscript {
 
 [Wikipedia](https://en.wikipedia.org/wiki/HTTP_Secure)
 [What is SSL and what are Certificates?](http://www.tldp.org/HOWTO/SSL-Certificates-HOWTO/x64.html)
+[How to install ssl certs](http://www.opentox.org/tutorials/q-edit/how-to-install-ssl-certificates)
 
