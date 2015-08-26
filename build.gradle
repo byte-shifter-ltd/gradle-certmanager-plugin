@@ -1,0 +1,22 @@
+group 'io.byteshifter'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'groovy'
+apply from: "${rootDir}/gradle/integTest.gradle"
+
+repositories {
+    if( project.hasProperty('internalArtifactRepository') ){
+        maven { url project.internalArtifactRepository }
+    } else {
+        jcenter()
+    }
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+
+    testCompile ('com.netflix.nebula:nebula-test:2.2.+'){
+        exclude group: 'org.codehaus.groovy'
+    }
+}
