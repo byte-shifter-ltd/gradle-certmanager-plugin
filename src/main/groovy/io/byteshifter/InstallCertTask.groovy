@@ -30,6 +30,7 @@
  */
 package io.byteshifter
 
+import io.byteshifter.internal.StringUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
@@ -52,20 +53,6 @@ class InstallCertTask extends DefaultTask {
 
     @TaskAction
     void run() throws Exception {
-        String host;
-        int port;
-        char[] passphrase;
-        if ((args.length == 1) || (args.length == 2)) {
-            String[] c = args[0].split(":");
-            host = c[0];
-            port = (c.length == 1) ? 443 : Integer.parseInt(c[1]);
-            String p = (args.length == 1) ? "changeit" : args[1];
-            passphrase = p.toCharArray();
-        } else {
-            System.out.println("Usage: java InstallCert <host>[:port] [passphrase]");
-            return;
-        }
-
         File file = new File("jssecacerts");
         if (file.isFile() == false) {
             char separatorChar = File.separatorChar;
@@ -111,8 +98,7 @@ class InstallCertTask extends DefaultTask {
             return;
         }
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         System.out.println();
         System.out.println("Server sent " + chain.length + " certificate(s):");
@@ -121,16 +107,19 @@ class InstallCertTask extends DefaultTask {
         MessageDigest md5 = MessageDigest.getInstance("MD5");
         for (int i = 0; i < chain.length; i++) {
             X509Certificate cert = chain[i];
-            System.out.println
-            (" " + (i + 1) + " Subject " + cert.getSubjectDN());
+            System.out.println(" " + (i + 1) + " Subject " + cert.getSubjectDN());
             System.out.println("   Issuer  " + cert.getIssuerDN());
             sha1.update(cert.getEncoded());
-            System.out.println("   sha1    " + toHexString(sha1.digest()));
+            System.out.println("   sha1    " + StringUtils.toHexString(sha1.digest()));
             md5.update(cert.getEncoded());
-            System.out.println("   md5     " + toHexString(md5.digest()));
+            System.out.println("   md5     " + StringUtils.toHexString(md5.digest()));
             System.out.println();
         }
 
+        /**
+         * Take an input to determine which cert to add to trusted keystore
+         * TODO: replace this with an input from the user
+         */
         System.out.println("Enter certificate to add to trusted keystore or 'q' to quit: [1]");
         String line = reader.readLine().trim();
         int k;
@@ -152,23 +141,10 @@ class InstallCertTask extends DefaultTask {
         System.out.println();
         System.out.println(cert);
         System.out.println();
-        System.out.println
-        ("Added certificate to keystore 'jssecacerts' using alias '"
+        System.out.println("Added certificate to keystore 'jssecacerts' using alias '"
                 + alias + "'");
     }
 
-    private static final char[] HEXDIGITS = "0123456789abcdef".toCharArray();
-
-    private static String toHexString(byte[] bytes) {
-        StringBuilder sb = new StringBuilder(bytes.length * 3);
-        for (int b : bytes) {
-            b &= 0xff;
-            sb.append(HEXDIGITS[b >> 4]);
-            sb.append(HEXDIGITS[b & 15]);
-            sb.append(' ');
-        }
-        return sb.toString();
-    }
 
     private static class SavingTrustManager implements X509TrustManager {
 
