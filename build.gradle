@@ -3,6 +3,7 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'groovy'
 apply from: "${rootDir}/gradle/integTest.gradle"
+apply from: "${rootDir}/gradle/codenarc.gradle"
 
 repositories {
     if( project.hasProperty('internalArtifactRepository') ){
