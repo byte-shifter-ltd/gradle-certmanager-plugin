@@ -1,6 +1,7 @@
 package io.byteshifter
 
 import io.byteshifter.tasks.InstallCertTask
+import io.byteshifter.tasks.PrintCertsTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -18,5 +19,6 @@ class CertManagerPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         project.task("installCert", type: InstallCertTask)
+        project.task("printCerts", type: PrintCertsTask)
     }
 }
