@@ -28,41 +28,24 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package io.byteshifter
+package io.byteshifter.tasks
 
 import io.byteshifter.internal.StringUtils
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.TaskAction
 
 import javax.net.ssl.*
 import java.security.KeyStore
 import java.security.MessageDigest
-import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
 
 /**
  * https://code.google.com/p/misc-utils/wiki/JavaHttpsUrl#Adding_the_certificate_that_is_not_accepted
  * @author Sion Williams
  */
-class InstallCertTask extends DefaultTask {
+class InstallCertTask extends AbstractCertTask {
 
-    @Input String host = 'opensso.in-silico.ch'
-    @Input int port = 443
-    @Input char[] passphrase = "changeit".toCharArray()
-
-    @TaskAction
+    @Override
     void run() throws Exception {
-        File file = new File("jssecacerts");
-        if (file.isFile() == false) {
-            char separatorChar = File.separatorChar;
-            File dir = new File(System.getProperty("java.home") + separatorChar
-                    + "lib" + separatorChar + "security");
-            file = new File(dir, "jssecacerts");
-            if (file.isFile() == false) {
-                file = new File(dir, "cacerts");
-            }
-        }
+        File file = createCert()
         System.out.println("Loading KeyStore " + file + "...");
         InputStream inputStream = new FileInputStream(file);
         KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -92,6 +75,7 @@ class InstallCertTask extends DefaultTask {
             e.printStackTrace(System.out);
         }
 
+        // This is the list of certificates returned by the server
         X509Certificate[] chain = tm.chain;
         if (chain == null) {
             System.out.println("Could not obtain server certificate chain");
@@ -110,9 +94,9 @@ class InstallCertTask extends DefaultTask {
             System.out.println(" " + (i + 1) + " Subject " + cert.getSubjectDN());
             System.out.println("   Issuer  " + cert.getIssuerDN());
             sha1.update(cert.getEncoded());
-            System.out.println("   sha1    " + StringUtils.toHexString(sha1.digest()));
+            System.out.println("   sha1    " + StringUtils.formattedToHexString(sha1.digest()));
             md5.update(cert.getEncoded());
-            System.out.println("   md5     " + StringUtils.toHexString(md5.digest()));
+            System.out.println("   md5     " + StringUtils.formattedToHexString(md5.digest()));
             System.out.println();
         }
 
@@ -145,29 +129,4 @@ class InstallCertTask extends DefaultTask {
                 + alias + "'");
     }
 
-
-    private static class SavingTrustManager implements X509TrustManager {
-
-        private final X509TrustManager tm;
-        private X509Certificate[] chain;
-
-        SavingTrustManager(X509TrustManager tm) {
-            this.tm = tm;
-        }
-
-        public X509Certificate[] getAcceptedIssuers() {
-            throw new UnsupportedOperationException();
-        }
-
-        public void checkClientTrusted(X509Certificate[] chain, String authType)
-                throws CertificateException {
-            throw new UnsupportedOperationException();
-        }
-
-        public void checkServerTrusted(X509Certificate[] chain, String authType)
-                throws CertificateException {
-            this.chain = chain;
-            tm.checkServerTrusted(chain, authType);
-        }
-    }
 }

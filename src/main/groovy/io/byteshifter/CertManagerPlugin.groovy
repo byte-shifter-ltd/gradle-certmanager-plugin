@@ -1,5 +1,6 @@
 package io.byteshifter
 
+import io.byteshifter.tasks.InstallCertTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
