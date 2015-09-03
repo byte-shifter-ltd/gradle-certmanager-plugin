@@ -128,5 +128,4 @@ class InstallCertTask extends AbstractCertTask {
         System.out.println("Added certificate to keystore 'jssecacerts' using alias '"
                 + alias + "'");
     }
-
 }
