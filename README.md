@@ -10,6 +10,7 @@ WIP
 ## Build Status
 
 [![Build Status](https://travis-ci.org/byte-shifter-ltd/gradle-certmanager-plugin.svg)](https://travis-ci.org/byte-shifter-ltd/gradle-certmanager-plugin)
+[![Coverage Status](https://coveralls.io/repos/byte-shifter-ltd/gradle-certmanager-plugin/badge.svg?branch=master&service=github)](https://coveralls.io/github/byte-shifter-ltd/gradle-certmanager-plugin?branch=master)
 
 ## Usage
 

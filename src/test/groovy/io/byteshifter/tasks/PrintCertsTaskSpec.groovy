@@ -23,7 +23,7 @@ class PrintCertsTaskSpec extends Specification {
         project.tasks.findByName(TASK_NAME) == null
 
         when:
-        project.task(TASK_NAME, type: InstallCertTask)
+        project.task(TASK_NAME, type: PrintCertsTask)
 
         then:
         Task task = project.tasks.findByName(TASK_NAME)
@@ -44,7 +44,7 @@ class PrintCertsTaskSpec extends Specification {
 
     def "PrintCertsTask defaults can be overridden"() {
         given:
-        project.task(TASK_NAME, type: PrintCertsTask){
+        project.task(TASK_NAME, type: PrintCertsTask) {
             host = 'localhost'
             port = 9000
             passphrase = "welcome1".toCharArray()

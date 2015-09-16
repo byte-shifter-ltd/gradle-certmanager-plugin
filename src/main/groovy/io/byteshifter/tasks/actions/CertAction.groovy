@@ -1,27 +1,36 @@
-package io.byteshifter.tasks
+package io.byteshifter.tasks.actions
 
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 
 import javax.net.ssl.X509TrustManager
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
 
 /**
+ * CertAction
+ * An abstract class which follows the Strategy design pattern for encapsulating the Gradle task action implementation.
+ * This design is used to improve testability. We no longer need to directly instantiate a Gradle task to test,
+ * which is disallowed by Gradle anyway.
+ *
  * @author Sion Williams
  */
-abstract class AbstractCertTask extends DefaultTask {
-    @Input String host = 'opensso.in-silico.ch'
-    @Input int port = 443
-    @Input char[] passphrase = "changeit".toCharArray()
+abstract class CertAction {
 
-    @TaskAction
-    void exectuteTask() {
-        run()
+    private String host
+    private int port
+    private char[] passphrase
+    Logger logger = Logging.getLogger(CertAction)
+
+
+    CertAction(String host, int port, char[] passphrase) {
+        assert host, "missing host parameter"
+        assert port, "missing port parameter"
+
+        this.host = host
+        this.port = port
+        this.passphrase = passphrase
     }
-
-    abstract void run()
 
     protected File createCert() {
         File file = new File("jssecacerts");
@@ -61,4 +70,6 @@ abstract class AbstractCertTask extends DefaultTask {
             tm.checkServerTrusted(chain, authType);
         }
     }
+
+    abstract void runAction()
 }
