@@ -1,6 +1,8 @@
 env:
    - TERM=dumb
 
+sudo: false
+
 language: groovy
 jdk:
   - oraclejdk8
@@ -9,3 +11,9 @@ jdk:
 
 before_install:
  - chmod +x gradlew
+
+after_success:
+ - ./gradlew jacocoTestReport coveralls
+
+after_failure:
+ - ./gradlew clean check --debug
