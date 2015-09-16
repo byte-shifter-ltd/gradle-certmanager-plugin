@@ -26,6 +26,7 @@ abstract class CertAction {
     CertAction(String host, int port, char[] passphrase) {
         assert host, "missing host parameter"
         assert port, "missing port parameter"
+        assert passphrase, "missing passphrase parameter"
 
         this.host = host
         this.port = port
